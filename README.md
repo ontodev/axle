@@ -35,7 +35,7 @@ we try to follow the familiar `git` interface and workflow:
 There is no step corresponding to `git commit`.
 
 We recommend running `axle push` after updating a tracked table to keep the XLSX sheets in sync. 
-When updating the XLSX spreadsheet, we recommend running `cogs pull` to keep the tables in sync.
+When updating the XLSX spreadsheet, we recommend running `axle pull` to keep the tables in sync.
 
 ### Logging
 
@@ -88,14 +88,14 @@ To sync the local version of sheets with the data in `.axle/`, run [`axle merge`
 Running `init` creates an `.axle` directory containing configuration data. This also creates a new XLSX file with the project title, if one does not already exist.
 
 ```
-cogs init TITLE
+axle init TITLE
 ```
 
 By default, the XLSX spreadsheet will be created as `{title}.xlsx`, where the title is lowercase with spaces replaced with underscores.
 You can specify a different path for the spreadsheet with the `-p`/`--path` option, but this must always end with `.xlsx`:
 
 ```
-cogs init TITLE -p PATH
+axle init TITLE -p PATH
 ```
 
 If a spreadsheet already exists at the path, all existing sheets from that spreadsheet will automaticallyy be added to your project.
@@ -103,7 +103,7 @@ If a spreadsheet already exists at the path, all existing sheets from that sprea
 You can also specify a directory containing a set of tables (TSV/CSV) to start your project with using the `-d`/`--directory` option:
 
 ```
-cogs init TITLE -d DIRECTORY
+axle init TITLE -d DIRECTORY
 ```
 
 Any new sheets that are added to the spreadsheet will be given a default format of TSV when running `axle fetch` or `axle pull`.
@@ -115,7 +115,7 @@ Running `pull` will sync tables with sheets in the XLSX spreadsheet.
 This combines `axle fetch` and `axle merge` into one step.
 
 ```
-cogs pull
+axle pull
 ```
 
 Note that if you make changes to a table without running `axle push`, then run `axle pull`, the changes **will be overwritten**.
@@ -127,7 +127,7 @@ This includes creating new sheets for any added tables (`axle add`) and deleting
 Any changes to the tables are also pushed to the corresponding sheets.
 
 ```
-cogs push
+axle push
 ```
 
 ### `merge`
@@ -135,7 +135,7 @@ cogs push
 Running `merge` will sync tables with data in the `.axle` directory after running `axle fetch`.
 
 ```
-cogs pull
+axle pull
 ```
 
 Note that if you make changes to a table without running `axle push`, then run `axle fetch && axle merge`, the changes **will be overwritten**.
