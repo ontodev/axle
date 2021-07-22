@@ -200,7 +200,7 @@ def run_push(args):
 def run_rm(args):
     """Wrapper for push function."""
     try:
-        rm(args.titles, keep_local=args.keep, verbose=args.verbose)
+        rm(args.titles, keep=args.keep, verbose=args.verbose)
     except AxleError as e:
         logging.critical(str(e))
         sys.exit(1)
