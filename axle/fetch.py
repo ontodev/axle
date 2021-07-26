@@ -193,7 +193,9 @@ def get_cell_format(cell):
         if attr == "hyperlink":
             if isinstance(v.target, str):
                 fmt[attr] = v.target
-        elif isinstance(v, str) or isinstance(v, float) or isinstance(v, int):
+        elif (
+            isinstance(v, str) or isinstance(v, float) or isinstance(v, int) or isinstance(v, bool)
+        ):
             fmt[attr] = v
         else:
             more_attrs = get_attributes(v)
