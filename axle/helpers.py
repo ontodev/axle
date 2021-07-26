@@ -1,4 +1,5 @@
 import csv
+import json
 import logging
 import os
 import pkg_resources
@@ -49,6 +50,55 @@ def get_config(axle_dir):
     return config
 
 
+def get_format_dict(axle_dir):
+    """Get a dict of numerical format ID -> the format dict."""
+    if (
+        os.path.exists(f"{axle_dir}/formats.json")
+        and not os.stat(f"{axle_dir}/formats.json").st_size == 0
+    ):
+        with open(f"{axle_dir}/formats.json", "r") as f:
+            fmt_dict = json.loads(f.read())
+            return {int(k): v for k, v in fmt_dict.items()}
+    return {}
+
+
+def get_sheet_formats(axle_dir):
+    """Get a dict of sheet ID -> formatted cells."""
+    sheet_to_formats = {}
+    with open(f"{axle_dir}/format.tsv", "r") as f:
+        reader = csv.DictReader(f, delimiter="\t")
+        for row in reader:
+            sheet_title = row["Sheet Title"]
+            cell = row["Cell"]
+            fmt = int(row["Format ID"])
+            if sheet_title in sheet_to_formats:
+                cell_to_format = sheet_to_formats[sheet_title]
+            else:
+                cell_to_format = {}
+            cell_to_format[cell] = fmt
+            sheet_to_formats[sheet_title] = cell_to_format
+    return sheet_to_formats
+
+
+def get_sheet_notes(axle_dir):
+    """Get a dict of sheet ID -> notes on cells."""
+    sheet_to_notes = {}
+    with open(f"{axle_dir}/note.tsv") as f:
+        reader = csv.DictReader(f, delimiter="\t")
+        for row in reader:
+            sheet_title = row["Sheet Title"]
+            cell = row["Cell"]
+            note = row["Note"]
+            author = row["Author"]
+            if sheet_title in sheet_to_notes:
+                cell_to_note = sheet_to_notes[sheet_title]
+            else:
+                cell_to_note = {}
+            cell_to_note[cell] = {"text": note, "author": author}
+            sheet_to_notes[sheet_title] = cell_to_note
+    return sheet_to_notes
+
+
 def get_tracked_sheets(axle_dir):
     """Get the current tracked sheets in this project from sheet.tsv as a dict of sheet title ->
     details. They may or may not have corresponding cached/local sheets."""
@@ -77,6 +127,55 @@ def set_logging(verbose):
         logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
     else:
         logging.basicConfig(level=logging.WARNING, format="%(levelname)s: %(message)s")
+
+
+def update_formats(axle_dir, sheet_formats, overwrite=False):
+    """Update format.tsv with current formatting from XLSX."""
+    current_sheet_formats = {}
+    if not overwrite:
+        current_sheet_formats = get_sheet_formats(axle_dir)
+    fmt_rows = []
+    for sheet_title, formats in sheet_formats.items():
+        current_sheet_formats[sheet_title] = formats
+    for sheet_title, formats in current_sheet_formats.items():
+        for cell, fmt in formats.items():
+            fmt_rows.append({"Sheet Title": sheet_title, "Cell": cell, "Format ID": fmt})
+    with open(f"{axle_dir}/format.tsv", "w") as f:
+        writer = csv.DictWriter(
+            f, delimiter="\t", lineterminator="\n", fieldnames=["Sheet Title", "Cell", "Format ID"],
+        )
+        writer.writeheader()
+        writer.writerows(fmt_rows)
+
+
+def update_notes(axle_dir, sheet_notes, overwrite=False):
+    """Update note.tsv with current remote notes.
+    Remove any lines with a Sheet ID in removed_ids."""
+    current_sheet_notes = {}
+    if not overwrite:
+        current_sheet_notes = get_sheet_notes(axle_dir)
+    note_rows = []
+    for sheet_title, notes in sheet_notes.items():
+        current_sheet_notes[sheet_title] = notes
+    for sheet_title, notes in current_sheet_notes.items():
+        for cell, note in notes.items():
+            note_rows.append(
+                {
+                    "Sheet Title": sheet_title,
+                    "Cell": cell,
+                    "Note": note["text"],
+                    "Author": note["author"],
+                }
+            )
+    with open(f"{axle_dir}/note.tsv", "w") as f:
+        writer = csv.DictWriter(
+            f,
+            delimiter="\t",
+            lineterminator="\n",
+            fieldnames=["Sheet Title", "Cell", "Note", "Author"],
+        )
+        writer.writeheader()
+        writer.writerows(note_rows)
 
 
 def validate_axle_project():

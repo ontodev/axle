@@ -63,7 +63,22 @@ def write_data(title, filepath, directory=None, file_format="tsv"):
         writer.writerow({"Key": "Directory", "Value": directory})
         writer.writerow({"Key": "File Format", "Value": file_format.lower()})
 
-    # TODO: formats, notes, and validation
+    with open(f".axle/note.tsv", "w") as f:
+        writer = csv.DictWriter(
+            f,
+            delimiter="\t",
+            lineterminator="\n",
+            fieldnames=["Sheet Title", "Cell", "Note", "Author"],
+        )
+        writer.writeheader()
+
+    with open(f".axle/format.tsv", "w") as f:
+        writer = csv.DictWriter(
+            f, delimiter="\t", lineterminator="\n", fieldnames=["Sheet Title", "Cell", "Format ID"],
+        )
+        writer.writeheader()
+
+    # TODO: data validation
 
     # sheet.tsv contains sheet (table/tab) details from the spreadsheet
     with open(".axle/sheet.tsv", "w") as f:

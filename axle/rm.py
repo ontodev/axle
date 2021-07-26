@@ -50,12 +50,7 @@ def rm(paths, keep=False, verbose=False):
             f,
             delimiter="\t",
             lineterminator="\n",
-            fieldnames=[
-                "Title",
-                "Path",
-                "Frozen Rows",
-                "Frozen Columns",
-            ],
+            fieldnames=["Title", "Path", "Frozen Rows", "Frozen Columns",],
         )
         writer.writeheader()
         for title, sheet in sheets.items():
