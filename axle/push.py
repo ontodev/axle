@@ -83,9 +83,7 @@ def clear_xlsx_sheets(wb, tracked_sheets):
 
 
 def push_data(axle_dir, wb, tracked_sheets):
-    """Push all tracked sheets to the spreadsheet. Update sheets in AXLE tracked directory. Return
-    updated rows for sheet.tsv."""
-    sheet_rows = []
+    """Push all tracked sheets to the spreadsheet."""
     sheet_formats = get_sheet_formats(axle_dir)
     sheet_notes = get_sheet_notes(axle_dir)
     id_to_format = get_format_dict(axle_dir)
@@ -114,11 +112,11 @@ def push_data(axle_dir, wb, tracked_sheets):
 
         logging.info(f"pushing data from {sheet_path} to XLSX sheet '{sheet_title}'")
         sheet = wb.create_sheet(sheet_title)
-        details["Title"] = sheet_title
-        sheet_rows.append(details)
 
         cell_formats = sheet_formats.get(sheet_title, {})
         cell_notes = sheet_notes.get(sheet_title, {})
+
+        # TODO: push validation
 
         for row in range(0, len(rows)):
             for col in range(0, cols):
@@ -138,7 +136,6 @@ def push_data(axle_dir, wb, tracked_sheets):
         frozen_row = int(details["Frozen Rows"]) + 1
         frozen_col = col_to_a1(int(details["Frozen Columns"]) + 1)
         sheet.freeze_panes = frozen_col + str(frozen_row)
-    return sheet_rows
 
 
 def push(verbose=False):
@@ -153,16 +150,5 @@ def push(verbose=False):
     wb.remove_sheet(wb.get_sheet_by_name("Sheet"))
 
     tracked_sheets = get_tracked_sheets(axle_dir)
-    sheet_rows = push_data(axle_dir, wb, tracked_sheets)
+    push_data(axle_dir, wb, tracked_sheets)
     wb.save(config["Spreadsheet Path"])
-
-    # TODO: push formats, notes, validation
-    with open(f"{axle_dir}/sheet.tsv", "w") as f:
-        writer = csv.DictWriter(
-            f,
-            delimiter="\t",
-            lineterminator="\n",
-            fieldnames=["Title", "Path", "Frozen Rows", "Frozen Columns",],
-        )
-        writer.writeheader()
-        writer.writerows(sheet_rows)
