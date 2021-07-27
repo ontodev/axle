@@ -37,6 +37,10 @@ There is no step corresponding to `git commit`.
 We recommend running `axle push` after updating a tracked table to keep the XLSX sheets in sync. 
 When updating the XLSX spreadsheet, we recommend running `axle pull` to keep the tables in sync.
 
+There are some other commands that do not correspond to any `git` actions:
+
+- [`cogs apply`](#apply) applies attributes from standardized tables to one or more sheets
+
 ### Logging
 
 To print info-level logging messages (error and critical level messages are always printed), run any command with the `-v`/`--verbose` flag:
@@ -70,6 +74,14 @@ axle add PATH -r FREEZE_ROW -c FREEZE_COLUMN
 
 If you specify `-r 2 -c 1`, then the first two rows and the first column will be frozen once the sheet is pushed to the XLSX spreadsheet.
 If these options are not included, no rows or columns will be frozen.
+
+### `apply`
+
+Running `apply` applies the details of one or more [message tables](https://github.com/ontodev/cogs#message-tables) to the spreadsheet as cell formatting and notes.
+
+```
+axle apply [table1.tsv table2.tsv ...]
+```
 
 ### `fetch`
 
