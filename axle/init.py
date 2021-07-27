@@ -1,4 +1,5 @@
 import csv
+import json
 import logging
 import os
 
@@ -7,6 +8,49 @@ from .add import add
 from .exceptions import InitError
 from .helpers import get_version, set_logging
 from .push import push
+
+
+DEFAULT_FORMATS = {
+    "1": {
+        "alignment": {},
+        "border": {"outline": True},
+        "fill": {"fgColor": {"rgb": "FFF6C7C4", "tint": 0.0}, "patternType": "solid"},
+        "font": {
+            "color": {"theme": 1},
+            "family": 2.0,
+            "name": "Calibri",
+            "scheme": "minor",
+            "sz": 11.0,
+        },
+        "number_format": "General",
+    },
+    "2": {
+        "alignment": {},
+        "border": {"outline": True},
+        "fill": {"fgColor": {"rgb": "FFFFEFA1", "tint": 0.0}, "patternType": "solid"},
+        "font": {
+            "color": {"theme": 1},
+            "family": 2.0,
+            "name": "Calibri",
+            "scheme": "minor",
+            "sz": 11.0,
+        },
+        "number_format": "General",
+    },
+    "3": {
+        "alignment": {},
+        "border": {"outline": True},
+        "fill": {"fgColor": {"rgb": "FFB2E7F5", "tint": 0.0}, "patternType": "solid"},
+        "font": {
+            "color": {"theme": 1},
+            "family": 2.0,
+            "name": "Calibri",
+            "scheme": "minor",
+            "sz": 11.0,
+        },
+        "number_format": "General",
+    },
+}
 
 
 def init(title, filepath=None, directory=None, file_format="tsv", verbose=False):
@@ -71,6 +115,9 @@ def write_data(title, filepath, directory=None, file_format="tsv"):
             fieldnames=["Sheet Title", "Cell", "Note", "Author"],
         )
         writer.writeheader()
+
+    with open(".axle/formats.json", "w") as f:
+        f.write(json.dumps(DEFAULT_FORMATS, sort_keys=True, indent=4))
 
     with open(f".axle/format.tsv", "w") as f:
         writer = csv.DictWriter(

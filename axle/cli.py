@@ -4,6 +4,7 @@ import sys
 
 from argparse import ArgumentParser
 from .add import add
+from .apply import apply
 from .exceptions import AxleError
 from .fetch import fetch
 from .helpers import get_version
@@ -13,6 +14,7 @@ from .push import push
 from .rm import rm
 
 add_msg = "Add a table (TSV or CSV) to the project"
+apply_msg = "Apply a table to the spreadsheet"
 fetch_msg = "Update cached copies of tables with sheets from spreadsheet"
 init_msg = "Init a new AXLE project"
 merge_msg = "Update tracked tables with cached copies of sheets"
@@ -25,6 +27,7 @@ def usage():
     return f"""axle [command] [options] <arguments>
 commands:
   add      {add_msg}
+  apply    {apply_msg}
   fetch    {fetch_msg}
   help     Print this message
   init     {init_msg}
@@ -58,6 +61,15 @@ def main():
     sp.add_argument("-r", "--freeze-row", help="Row number to freeze up to", default="0")
     sp.add_argument("-c", "--freeze-column", help="Column number to freeze up to", default="0")
     sp.set_defaults(func=run_add)
+
+    # ------------------------------- apply -------------------------------
+    sp = subparsers.add_parser(
+        "apply", parents=[global_parser], description=apply_msg, usage="axle apply [PATH ...]",
+    )
+    sp.add_argument(
+        "paths", nargs="*", default=None, help="Path(s) to table(s) to apply",
+    )
+    sp.set_defaults(func=run_apply)
 
     # ------------------------------- fetch -------------------------------
     sp = subparsers.add_parser(
@@ -129,6 +141,15 @@ def run_add(args):
             freeze_column=args.freeze_column,
             verbose=args.verbose,
         )
+    except AxleError as e:
+        logging.critical(str(e))
+        sys.exit(1)
+
+
+def run_apply(args):
+    """Wrapper for apply function."""
+    try:
+        apply(args.paths, verbose=args.verbose)
     except AxleError as e:
         logging.critical(str(e))
         sys.exit(1)

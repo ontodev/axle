@@ -133,8 +133,8 @@ def fetch(verbose=False):
     with open(f"{axle_dir}/formats.json", "w") as f:
         f.write(json.dumps(id_to_format, sort_keys=True, indent=4))
     # Update config files for formats and notes
-    update_formats(axle_dir, sheet_formats, overwrite=True)
-    update_notes(axle_dir, sheet_notes, overwrite=True)
+    update_formats(axle_dir, sheet_formats)
+    update_notes(axle_dir, sheet_notes)
 
     # Update sheet.tsv
     with open(f"{axle_dir}/sheet.tsv", "w") as fw:

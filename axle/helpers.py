@@ -129,15 +129,10 @@ def set_logging(verbose):
         logging.basicConfig(level=logging.WARNING, format="%(levelname)s: %(message)s")
 
 
-def update_formats(axle_dir, sheet_formats, overwrite=False):
+def update_formats(axle_dir, sheet_formats):
     """Update format.tsv with current formatting from XLSX."""
-    current_sheet_formats = {}
-    if not overwrite:
-        current_sheet_formats = get_sheet_formats(axle_dir)
     fmt_rows = []
     for sheet_title, formats in sheet_formats.items():
-        current_sheet_formats[sheet_title] = formats
-    for sheet_title, formats in current_sheet_formats.items():
         for cell, fmt in formats.items():
             fmt_rows.append({"Sheet Title": sheet_title, "Cell": cell, "Format ID": fmt})
     with open(f"{axle_dir}/format.tsv", "w") as f:
@@ -148,16 +143,11 @@ def update_formats(axle_dir, sheet_formats, overwrite=False):
         writer.writerows(fmt_rows)
 
 
-def update_notes(axle_dir, sheet_notes, overwrite=False):
+def update_notes(axle_dir, sheet_notes):
     """Update note.tsv with current remote notes.
     Remove any lines with a Sheet ID in removed_ids."""
-    current_sheet_notes = {}
-    if not overwrite:
-        current_sheet_notes = get_sheet_notes(axle_dir)
     note_rows = []
     for sheet_title, notes in sheet_notes.items():
-        current_sheet_notes[sheet_title] = notes
-    for sheet_title, notes in current_sheet_notes.items():
         for cell, note in notes.items():
             note_rows.append(
                 {
