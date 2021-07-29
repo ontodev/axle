@@ -75,6 +75,8 @@ axle add PATH -r FREEZE_ROW -c FREEZE_COLUMN
 If you specify `-r 2 -c 1`, then the first two rows and the first column will be frozen once the sheet is pushed to the XLSX spreadsheet.
 If these options are not included, no rows or columns will be frozen.
 
+Finally, you can `add` a full directory by just including the path of the directory. Note that the `-t`/`--title` option cannot be used when adding a directory, and sheet names will be created from the name of the file (extension removed).
+
 ### `apply`
 
 Running `apply` applies the details of one or more [message tables](https://github.com/ontodev/cogs#message-tables) to the spreadsheet as cell formatting and notes.
