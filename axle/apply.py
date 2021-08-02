@@ -36,7 +36,7 @@ def apply(paths, verbose=False):
                 rows.append({k.lower(): v for k, v in r.items()})
 
             for h in headers:
-                if h not in MESSAGE_HEADERS:
+                if h.lower() not in MESSAGE_HEADERS:
                     raise ApplyError(f"The headers in table {p} are not valid for apply")
             message_tables.append(rows)
 

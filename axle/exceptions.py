@@ -10,6 +10,10 @@ class ApplyError(AxleError):
     """Used to indicate an error occurred during the apply step."""
 
 
+class ClearError(AxleError):
+    """Used to indicate an error occurred during the clear step."""
+
+
 class InitError(AxleError):
     """Used to indicate an error occurred during the init step."""
 

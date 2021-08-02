@@ -5,6 +5,7 @@ import sys
 from argparse import ArgumentParser
 from .add import add
 from .apply import apply
+from .clear import clear
 from .exceptions import AxleError
 from .fetch import fetch
 from .helpers import get_version
@@ -15,6 +16,7 @@ from .rm import rm
 
 add_msg = "Add a table (TSV or CSV) to the project"
 apply_msg = "Apply a table to the spreadsheet"
+clear_msg = "Clear formatting and/or notes from one or more sheets"
 fetch_msg = "Update cached copies of tables with sheets from spreadsheet"
 init_msg = "Init a new AXLE project"
 merge_msg = "Update tracked tables with cached copies of sheets"
@@ -28,6 +30,7 @@ def usage():
 commands:
   add      {add_msg}
   apply    {apply_msg}
+  clear    {clear_msg}
   fetch    {fetch_msg}
   help     Print this message
   init     {init_msg}
@@ -70,6 +73,19 @@ def main():
         "paths", nargs="*", default=None, help="Path(s) to table(s) to apply",
     )
     sp.set_defaults(func=run_apply)
+
+    # ------------------------------- clear -------------------------------
+    sp = subparsers.add_parser(
+        "clear",
+        parents=[global_parser],
+        description=clear_msg,
+        usage="axle clear KEYWORD [-t SHEET ...]",
+    )
+    sp.set_defaults(func=run_clear)
+    sp.add_argument(
+        "keyword", help="Specify what to clear from the sheet(s): format, notes, all"
+    )
+    sp.add_argument("-t", "--title", help="Title of sheet to clear from", action="append")
 
     # ------------------------------- fetch -------------------------------
     sp = subparsers.add_parser(
@@ -150,6 +166,15 @@ def run_apply(args):
     """Wrapper for apply function."""
     try:
         apply(args.paths, verbose=args.verbose)
+    except AxleError as e:
+        logging.critical(str(e))
+        sys.exit(1)
+
+
+def run_clear(args):
+    """Wrapper for clear function."""
+    try:
+        clear(args.keyword, on_sheets=args.title, verbose=args.verbose)
     except AxleError as e:
         logging.critical(str(e))
         sys.exit(1)
