@@ -82,8 +82,29 @@ Finally, you can `add` a full directory by just including the path of the direct
 Running `apply` applies the details of one or more [message tables](https://github.com/ontodev/cogs#message-tables) to the spreadsheet as cell formatting and notes.
 
 ```
-axle apply [table1.tsv table2.tsv ...]
+axle apply TABLE [TABLE ...]
 ```
+
+### `clear`
+
+`clear` removes applied attributes (either from [`apply`](#apply) or manually added to the sheet remotely) from the sheets in a spreadsheet:
+
+```
+axle clear KEYWORD
+```
+
+The keyword must be one of:
+* **formats**: sheet formatting
+* **notes**: sheet notes
+* **all**: formats and notes
+
+After the keyword, you can supply zero or more sheet titles to remove attributes from.
+
+If you wish to only remove attributes from certain sheets, you can do so with the `-t`/`--title` option:
+```
+axle clear KEYWORD [-t SHEET_TITLE ...]
+```
+
 
 ### `fetch`
 

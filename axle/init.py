@@ -71,8 +71,8 @@ def init(title, filepath=None, directory=None, file_format="tsv", verbose=False)
     write_data(title, filepath, directory=directory, file_format=file_format)
 
     if os.path.exists(filepath):
-        print("A spreadsheet already exists at " + filepath)
-        print("Run `axle pull` to get current sheets")
+        logging.warning("A spreadsheet already exists at " + filepath)
+        logging.warning("Run `axle pull` to get current sheets")
     else:
         # Create new XLSX spreadsheet
         wb = Workbook()
